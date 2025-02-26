@@ -7,11 +7,17 @@ sidebar:
 
 import { Render } from "~/components";
 
-Specify model or provider fallback with your [Universal endpoint](/ai-gateway/providers/universal/) to specify what to do if a request fails.
+Specify model or provider fallbacks with your [Universal endpoint](/ai-gateway/providers/universal/) to handle request failures and ensure reliability.
 
-## Example
+Cloudflare can trigger your fallback provider in response to [request errors](#request-failures) or [predetermined request timeouts](#request-timeouts). The [response header `cf-aig-step`](#response-headercf-aig-step) indicates which step successfully processed the request.
 
-For example, you could set up a gateway endpoint that:
+## Request failures
+
+By default, Cloudflare triggers your fallback if a model request returns an error.
+
+### Example
+
+In the following example, a request first goes to the [Workers AI](/workers-ai/) Inference API. If the request fails, it falls back to OpenAI. The response header `cf-aig-step` indicates which provider successfully processed the request.
 
 1. Sends a request to Workers AI Inference API.
 2. If that request fails, proceeds to OpenAI.

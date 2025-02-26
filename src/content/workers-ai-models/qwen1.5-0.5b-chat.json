@@ -15,6 +15,10 @@
             "value": "true"
         },
         {
+            "property_id": "context_window",
+            "value": "32000"
+        },
+        {
             "property_id": "info",
             "value": "https://huggingface.co/qwen/qwen1.5-0.5b-chat"
         }
@@ -352,6 +356,27 @@
                         "response": {
                             "type": "string",
                             "description": "The generated text response from the model"
+                        },
+                        "usage": {
+                            "type": "object",
+                            "description": "Usage statistics for the inference request",
+                            "properties": {
+                                "prompt_tokens": {
+                                    "type": "number",
+                                    "description": "Total number of tokens in input",
+                                    "default": 0
+                                },
+                                "completion_tokens": {
+                                    "type": "number",
+                                    "description": "Total number of tokens in output",
+                                    "default": 0
+                                },
+                                "total_tokens": {
+                                    "type": "number",
+                                    "description": "Total number of input and output tokens",
+                                    "default": 0
+                                }
+                            }
                         },
                         "tool_calls": {
                             "type": "array",

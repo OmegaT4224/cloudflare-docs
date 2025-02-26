@@ -11,6 +11,10 @@
     "tags": [],
     "properties": [
         {
+            "property_id": "context_window",
+            "value": "128000"
+        },
+        {
             "property_id": "terms",
             "value": "https://github.com/meta-llama/llama-models/blob/main/models/llama3_2/LICENSE"
         }
@@ -348,6 +352,27 @@
                         "response": {
                             "type": "string",
                             "description": "The generated text response from the model"
+                        },
+                        "usage": {
+                            "type": "object",
+                            "description": "Usage statistics for the inference request",
+                            "properties": {
+                                "prompt_tokens": {
+                                    "type": "number",
+                                    "description": "Total number of tokens in input",
+                                    "default": 0
+                                },
+                                "completion_tokens": {
+                                    "type": "number",
+                                    "description": "Total number of tokens in output",
+                                    "default": 0
+                                },
+                                "total_tokens": {
+                                    "type": "number",
+                                    "description": "Total number of input and output tokens",
+                                    "default": 0
+                                }
+                            }
                         },
                         "tool_calls": {
                             "type": "array",
