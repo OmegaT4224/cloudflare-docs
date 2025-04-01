@@ -351,7 +351,6 @@
 - link: https://github.com/cloudflare/templates/tree/staging/d1-starter-sessions-api
   id: Starter code for D1 Sessions API
   description: An introduction to D1 Sessions API. This demo simulates purchase orders administration.
-  tags: []
   products: [Workers, D1]
   languages: [TypeScript]
   cloudflare: true
