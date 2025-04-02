@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import ModelInfo from "./models/ModelInfo";
 import ModelBadges from "./models/ModelBadges";
 import { authorData } from "./models/data";
@@ -26,29 +26,27 @@ const ModelCatalog = ({ models }: { models: WorkersAIModelsSchema[] }) => {
 	];
 
 	// Sort models by pinned status first, then by created_at date
-	const sortedModels = useMemo(() => {
-		return [...models].sort((a, b) => {
-			// First check if either model is pinned
-			const isPinnedA = pinnedModelNames.includes(a.name);
-			const isPinnedB = pinnedModelNames.includes(b.name);
+	const sortedModels = [...models].sort((a, b) => {
+		// First check if either model is pinned
+		const isPinnedA = pinnedModelNames.includes(a.name);
+		const isPinnedB = pinnedModelNames.includes(b.name);
 
-			// If pinned status differs, prioritize pinned models
-			if (isPinnedA && !isPinnedB) return -1;
-			if (!isPinnedA && isPinnedB) return 1;
+		// If pinned status differs, prioritize pinned models
+		if (isPinnedA && !isPinnedB) return -1;
+		if (!isPinnedA && isPinnedB) return 1;
 
-			// If both are pinned, sort by position in pinnedModelNames array (for manual ordering)
-			if (isPinnedA && isPinnedB) {
-				return (
-					pinnedModelNames.indexOf(a.name) - pinnedModelNames.indexOf(b.name)
-				);
-			}
+		// If both are pinned, sort by position in pinnedModelNames array (for manual ordering)
+		if (isPinnedA && isPinnedB) {
+			return (
+				pinnedModelNames.indexOf(a.name) - pinnedModelNames.indexOf(b.name)
+			);
+		}
 
-			// If neither is pinned, sort by created_at date (newest first)
-			const dateA = a.created_at ? new Date(a.created_at) : new Date(0);
-			const dateB = b.created_at ? new Date(b.created_at) : new Date(0);
-			return dateB.getTime() - dateA.getTime();
-		});
-	}, [models]);
+		// If neither is pinned, sort by created_at date (newest first)
+		const dateA = a.created_at ? new Date(a.created_at) : new Date(0);
+		const dateB = b.created_at ? new Date(b.created_at) : new Date(0);
+		return dateB.getTime() - dateA.getTime();
+	});
 
 	useEffect(() => {
 		const params = new URLSearchParams(window.location.search);
