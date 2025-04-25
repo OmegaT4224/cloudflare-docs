@@ -3,6 +3,8 @@ title: Presigned URLs
 pcx_content_type: concept
 ---
 
+import {Tabs, TabItem } from "~/components";
+
 Presigned URLs are an [S3 concept](https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-presigned-url.html) for sharing direct access to your bucket without revealing your token secret. A presigned URL authorizes anyone with the URL to perform an action to the S3 compatibility endpoint for an R2 bucket. By default, the S3 endpoint requires an `AUTHORIZATION` header signed by your token. Every presigned URL has S3 parameters and search parameters containing the signature information that would be present in an `AUTHORIZATION` header. The performable action is restricted to a specific resource, an [operation](/r2/api/s3/api/), and has an associated timeout.
 
 There are three kinds of resources in R2:
@@ -141,15 +143,41 @@ export default {
 ## Differences between presigned URLs and R2 binding
 
 - When using an R2 binding, you will not need any token secrets in your Worker code. Instead, in your [Wrangler configuration file](/workers/wrangler/configuration/), you will create a [binding](/r2/api/workers/workers-api-usage/#3-bind-your-bucket-to-a-worker) to your R2 bucket. Additionally, authorization is handled in-line, which can reduce latency.
-
 - When using presigned URLs, you will need to create and use the token secrets in your Worker code.
 
 In some cases, R2 bindings let you implement certain functionality more easily. For example, if you wanted to offer a write-once guarantee so that users can only upload to a path once, with pre-signed URLs:
 
- - With R2 binding: You only need to pass the parameter once.
- - With presigned URLs: You need to sign specific headers and require the sender to send the same headers.
- 
- You can modify the previous example to sign additional headers:
+- With R2 binding: You only need to pass the parameter once.
+- With presigned URLs: You need to sign specific headers and require the sender to send the same headers.
+
+<Tabs>
+<TabItem label="R2 binding example">
+
+If you are using R2 bindings, you would change your upload to:
+
+```ts
+const existingObject = await env.R2_BUCKET.put(key, request.body, {
+	onlyIf: {
+		// No objects will have been uploaded before September 28th, 2021 which
+		// is the initial R2 announcement.
+		uploadedBefore: new Date(1632844800000),
+	},
+});
+if (existingObject?.etag !== request.headers.get("etag")) {
+	return new Response("attempt to overwrite object", { status: 400 });
+}
+```
+
+When using R2 bindings, you may need to consider the following limitations:
+
+- You cannot upload more than 100 MiB (200 MiB for Business customers) when using R2 bindings.
+- Enterprise customers can upload 500 MiB by default and can ask their account team to raise this limit.
+- Detecting [precondition failures](/r2/api/s3/extensions/#conditional-operations-in-putobject) is currently easier with presigned URLs as compared with R2 bindings.
+
+Note that these limitations depend on R2's extension for conditional uploads. Amazon's S3 service does not offer such functionality at this time.
+</TabItem>
+<TabItem label="Presigned URL example">
+You can modify the previous example to sign additional headers:
 
 ```ts
 const signed = await client.sign(
@@ -178,28 +206,8 @@ const response = await fetch(signed.url, {
 
 Note that the caller has to add the same `If-Unmodified-Since` header to use the URL. The caller cannot omit the header or use a different header, since the signature covers the headers. If the caller uses a different header, the presigned URL signature would not match, and they would receive a `403/SignatureDoesNotMatch`.
 
-If you are using R2 bindings, you would change your upload to:
-
-```ts
-const existingObject = await env.R2_BUCKET.put(key, request.body, {
-	onlyIf: {
-		// No objects will have been uploaded before September 28th, 2021 which
-		// is the initial R2 announcement.
-		uploadedBefore: new Date(1632844800000),
-	},
-});
-if (existingObject?.etag !== request.headers.get("etag")) {
-	return new Response("attempt to overwrite object", { status: 400 });
-}
-```
-
-When using the bindings, you may need to consider the following limitations:
-
-- You cannot upload more than 100 MiB (200 MiB for Business customers) when using the bindings.
-- Enterprise customers can upload 500 MiB by default and can ask their account team to raise this limit.
-- Detecting [precondition failures](/r2/api/s3/extensions/#conditional-operations-in-putobject) is currently easier with presigned URLs as compared with R2 bindings.
-
-Note that these limitations depend on R2's extension for conditional uploads. Amazon's S3 service does not offer such functionality at this time.
+</TabItem>
+</Tabs>
 
 ## Differences between presigned URLs and public buckets
 
