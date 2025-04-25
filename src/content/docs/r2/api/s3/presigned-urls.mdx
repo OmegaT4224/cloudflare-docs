@@ -80,7 +80,7 @@ A possible use case may be restricting an application to only be able to upload 
 
 If the application received a request for `https://example.com/uploads/dog.png`, it would respond with a presigned URL allowing a user to upload to your R2 bucket at the `/uploads/dog.png` path.
 
-To create a presigned URL, you will need to either use a package that implements the signing algorithm or implement the signing algorithm yourself. In this example, the `aws4fetch` package is used. You also need to have an access key ID and secret access key. Refer to [R2 API tokens](/r2/api/tokens/) for more information.
+To create a presigned URL, you will need to either use a package that implements the signing algorithm, or implement the signing algorithm yourself. In this example, the `aws4fetch` package is used. You also need to have an access key ID and a secret access key. Refer to [R2 API tokens](/r2/api/tokens/) for more information.
 
 ```ts
 import { AwsClient } from "aws4fetch";
@@ -171,7 +171,7 @@ const response = await fetch(signed.url, {
 });
 ```
 
-Note that the caller has to add the same `If-Unmodified-Since` header to use the URL. The caller cannot omit the header or use a different header since the signature covers the headers. If the caller uses a different header, the presigned URL signature would not match, and they would receive a `403/SignatureDoesNotMatch`.
+Note that the caller has to add the same `If-Unmodified-Since` header to use the URL. The caller cannot omit the header or use a different header, since the signature covers the headers. If the caller uses a different header, the presigned URL signature would not match, and they would receive a `403/SignatureDoesNotMatch`.
 
 If you are using R2 bindings, you would change your upload to:
 
