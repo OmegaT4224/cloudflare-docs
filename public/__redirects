@@ -128,7 +128,7 @@
 /ai-gateway/integration/aig-workers-ai-binding/ /ai-gateway/integrations/aig-workers-ai-binding/ 301
 /ai-gateway/integration/ /ai-gateway/integrations/ 301
 /ai-gateway/providers/open-router/ /ai-gateway/providers/openrouter/ 301
-/ai-gateway/providers/universal/ /ai-gateway/universal/ 301
+/ai-gateway/providers/universal/ /ai-gateway/universal-endpoint/universal/ 301
 
 # agents
 /agents/capabilities/mcp-server/ /agents/model-context-protocol/ 301
