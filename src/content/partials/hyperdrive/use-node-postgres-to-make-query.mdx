@@ -8,6 +8,8 @@ Install the `node-postgres` driver:
 
 ```sh
 npm install pg
+# If using TypeScript
+npm i --save-dev @types/pg
 ```
 
 Add the required Node.js compatibility flags and Hyperdrive binding to your `wrangler.jsonc` file:
@@ -48,6 +50,8 @@ export default {
 			});
 		} catch (error: any) {
 			console.error("Database error:", error.message);
+
+			return Response.error();
 		}
 	},
 };

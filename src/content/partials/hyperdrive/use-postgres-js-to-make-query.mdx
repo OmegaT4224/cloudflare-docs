@@ -48,6 +48,8 @@ export default {
 			return Response.json({ success: true, result: result });
 		} catch (e: any) {
 			console.error("Database error:", e.message);
+
+			return Response.error();
 		}
 	},
 } satisfies ExportedHandler<Env>;
