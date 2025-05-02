@@ -344,11 +344,11 @@ This configuration creates an authentication loop. Cloudflare Access tries to au
 
 ## When installing WARP on Windows, the Setup Wizard ends prematurely.
 
-This issue can occur if the system is missing the [required version](https://developers.cloudflare.com/cloudflare-one/connections/connect-devices/warp/download-warp/#windows:~:text=NET%20Framework%20version-,4.7.2%20or%20later,-HD%20space) of the .NET Framework.
+This error can occur for several reasons, including missing dependencies, like the appropriate .NET Framework version or other Dynamic Link Libraries (DLLs) such as `netstandard2.0`, required during installation.
 
-Cloudflare WARP requires at least **.NET Framework Runtime 4.7.2**. Some older versions of Windows do not include this runtime by default, which causes the installer to fail with a `Setup Wizard ended prematurely` error.
+One common cause is a missing or outdated version of the [.NET Framework Runtime](https://developers.cloudflare.com/cloudflare-one/connections/connect-devices/warp/download-warp/#windows:~:text=NET%20Framework%20version-,4.7.2%20or%20later,-HD%20space). Cloudflare WARP requires a .NET Framework version of `4.7.2` or later.
 
-This problem typically only affects legacy versions of Windows (such as, Windows 10 Enterprise 1607 LTSB, which is bundled with .NET `4.6`.) More recent Windows versions include .NET `4.7.2` or later by default and do not encounter this error.
+Some legacy Windows systems (such as Windows 10 Enterprise 1607 LTSB, which is bundled with .NET `4.6`) do not include this runtime by default and may fail during installation with a `Setup Wizard ended prematurely` error. More recent Windows versions include .NET `4.7.2` or later by default and do not encounter this error.
 
 To fix this:
 
@@ -358,5 +358,11 @@ To fix this:
 If the problem continues, try running the [.NET Repair Tool](https://www.microsoft.com/en-ca/download/details.aspx?id=30135), or check which .NET versions are installed by running the following command in PowerShell:
 
 ```powershell
-Get-ChildItem -Path “HKLM:\SOFTWARE\Microsoft\NET Framework Setup\NDP” -Recurse | ForEach-Object { $_.Name; Get-ItemProperty $_.PSPath; "" } 
+Get-ChildItem -Path “HKLM:\SOFTWARE\Microsoft\NET Framework Setup\NDP” -Recurse | ForEach-Object { $_.Name; Get-ItemProperty $_.PSPath; "" }
+```
+
+If the issue still as not resolved, run:
+
+```powershell
+msiexec /i <PATH_TO_WARP_MSI> /L*V <PATH_TO_OUTPUT_LOG>
 ```
