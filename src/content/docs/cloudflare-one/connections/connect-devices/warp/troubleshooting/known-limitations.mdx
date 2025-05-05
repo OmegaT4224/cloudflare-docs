@@ -139,7 +139,7 @@ Address: 127.0.2.2
 Name:   connectivity-check.warp-svc
 Address: 127.0.2.3
 
-# The host is also resolvable by running using a host network
+# The host is also resolvable by running a container using a host network
 ❯ docker run --rm --net host alpine nslookup connectivity-check.warp-svc.
 Server:         127.0.0.11
 Address:        127.0.0.11:53Non-authoritative answer:
