@@ -65,3 +65,67 @@ All commands are run from the root of the project, from a terminal:
 ## 👀 Want to learn more?
 
 Check out [Starlight’s docs](https://starlight.astro.build/), read [the Astro documentation](https://docs.astro.build), or jump into the [Astro Discord server](https://astro.build/chat).
+#!/bin/bash
+
+# === AXIOM-AF CERT REGISTRATION SCRIPT ===
+# Purpose: Fetch cert, update DNS, register with ReflectChain (no cleanup)
+
+# === CONFIGURATION ===
+USERNAME="ALC-ROOT-1010-1111-XCOV∞"
+NFT_ID="10101111"
+CERT_URL="https://your.r2.link/certificates/FD_AXIOM_VALIDATOR_CERT.pem"
+CERT_PATH="/tmp/FD_AXIOM_VALIDATOR_CERT.pem"
+CLOUDFLARE_API_TOKEN="YOUR_CLOUDFLARE_API_TOKEN"
+ZONE_ID="YOUR_CLOUDFLARE_ZONE_ID"
+RECORD_ID="YOUR_DNS_RECORD_ID"
+REFLECTCHAIN_ENDPOINT="https://reflect.axiom.af/validator/update"
+GITHUB_REPO="github.com/YOUR_USERNAME/floating-dragon-genesis"
+GIT_BRANCH="main"
+
+# === STEP 1: DOWNLOAD CERT ===
+echo "[AXIOM] 📥 Downloading validator certificate from R2..."
+curl -sSL "$CERT_URL" -o "$CERT_PATH" || {
+  echo "[AXIOM] ❌ Failed to download cert"; exit 1;
+}
+echo "[AXIOM] ✅ Certificate downloaded: $CERT_PATH"
+
+# === STEP 2: UPDATE CLOUDFLARE DNS TXT RECORD ===
+CERT_CONTENT=$(base64 "$CERT_PATH" | tr -d '\n')
+echo "[AXIOM] 🌐 Updating Cloudflare DNS record..."
+
+curl -s -X PUT "https://api.cloudflare.com/client/v4/zones/$ZONE_ID/dns_records/$RECORD_ID" \
+  -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+  -H "Content-Type: application/json" \
+  --data "{\"type\":\"TXT\",\"name\":\"_axiom-cert\",\"content\":\"$CERT_CONTENT\",\"ttl\":120,\"proxied\":false}" \
+  | jq '.'
+
+# === STEP 3: REGISTER INTO REFLECTCHAIN OR LOCAL CHAIN ===
+echo "[AXIOM] 🔐 Registering cert on ReflectChain..."
+curl -s -X POST "$REFLECTCHAIN_ENDPOINT" \
+  -H "Content-Type: application/json" \
+  -d "{
+    \"uid\": \"$USERNAME\",
+    \"nft_id\": \"$NFT_ID\",
+    \"timestamp\": \"$(date -u +%Y-%m-%dT%H:%M:%SZ)\",
+    \"cert_b64\": \"$CERT_CONTENT\",
+    \"cert_url\": \"$CERT_URL\"
+  }" | jq '.'
+
+# === STEP 4 (OPTIONAL): GIT PUSH TO AXIOM REPO ===
+echo "[AXIOM] 🪪 Committing cert to GitHub repo..."
+gh repo clone "$GITHUB_REPO"
+cd floating-dragon-genesis
+mkdir -p certs
+cp "$CERT_PATH" ./certs/
+git checkout -b cert-registry
+git add ./certs/$(basename "$CERT_PATH")
+git commit -m "🔐 Register cert for $USERNAME"
+git push --set-upstream origin cert-registry
+
+echo "[AXIOM] ✅ GitHub push complete"
+
+# === FINAL ===
+echo "[AXIOM] ✅ Certificate integration complete."
+echo "📌 File stored at: $CERT_PATH"
+echo "🌐 DNS Record: _axiom-cert TXT"
+echo "🧬 ReflectChain Registered"
