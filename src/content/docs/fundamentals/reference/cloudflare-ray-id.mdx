@@ -21,13 +21,19 @@ Ray IDs are not guaranteed to be unique for every request. In some situations, d
 
 All customers can view Ray IDs and associated information — IP address, user agent, ASN, etc. — by looking through [sampled logs](/waf/analytics/security-events/#sampled-logs) in Security Events.
 
-![Example list of events in sampled logs, with one of the events expanded to show its details](~/assets/images/waf/events-sampled-logs.png)
+![Example list of events in sampled logs, with the Ray ID highlighted from one of the expanded events to show its details](~/assets/images/fundamentals/ray-id.png)
 
 Additionally, you can [add filters](/waf/analytics/security-events/#adjust-displayed-data) to look for specific Ray IDs.
 
 ![Example of adding a new filter in Security Events for the Block action](~/assets/images/waf/events-add-filter.png)
 
 Please note that Security Events may use sampled data to improve performance. If sampled data is applied to your search, you might not see all events, and filters might not return the expected results. To display more events, select a smaller timeframe.
+
+### Log Explorer
+
+[Log Explorer](/log-explorer/) provides access to Cloudflare logs with all the context available within the Cloudflare platform. 
+You can monitor security and performance issues with custom dashboards or investigate and troubleshoot issues with log search.
+Log explorer allows you to [build queries](/log-explorer/log-search/) for filtering specific Ray IDs.
 
 ### Logs
 

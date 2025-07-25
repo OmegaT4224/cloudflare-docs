@@ -11,7 +11,7 @@ When a visitor encounters Turnstile, it assesses whether they are human or bot-l
 
 ## Metrics
 
-A "solved" Turnstile challenge does not automatically confirm the visitor is human. You must [call the siteverify API](#call-siteverify) to validate the token and proceed only if the response returns `success:true`.
+A "solved" Turnstile challenge does not automatically confirm the visitor is human. You must [call the Siteverify API](#call-siteverify) to validate the token and proceed only if the response returns `success:true`.
 
 For example, the challenge outcome values in your analytics may look like this:
 
@@ -25,7 +25,7 @@ For example, the challenge outcome values in your analytics may look like this:
 
 By analyzing these metrics, you can identify trends such as high failure rates in specific regions, device types, or traffic sources, which may indicate bot activity or misconfigurations.
 
-### Call siteverify
+### Call Siteverify
 
 <Render file="siteverify" />
 
@@ -43,6 +43,6 @@ For example, the solve rate values in your analytics may look like this:
 
 - **Non-interactive solves**: Challenges solved without requiring the visitor to click a checkbox.
 - **Interactive solves**: Challenges solved that required visitor interaction to be solved.
-- [**Pre-clearance solves**](/turnstile/concepts/pre-clearance-support/): Challenges solved that issued the `cf-clearance` cookie along with the Turnstile token.
+- [**Pre-clearance solves**](/turnstile/concepts/pre-clearance-support/): Challenges solved that issued the `cf_clearance` cookie along with the Turnstile token.
 
 A low solve rate might indicate increased bot activity attempting to bypass Turnstile or anomalous traffic patterns that require further investigation.
